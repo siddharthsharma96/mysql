@@ -125,3 +125,108 @@ from employee;
 
 select ssn, dname
 from employee,department;
+
+select ssn, bdate, dname
+from employee,department;
+
+select * from employee;
+
+UPDATE employee 
+SET salary='46000'
+WHERE ssn=3;
+
+UPDATE employee 
+SET salary='12000'
+WHERE ssn=4;
+
+UPDATE employee 
+SET salary='18000'
+WHERE ssn=5;
+UPDATE employee 
+SET salary='10000'
+WHERE ssn=6;
+
+UPDATE employee 
+SET lname='goyal'
+WHERE ssn=2;
+
+UPDATE employee 
+SET lname='aggarwal'
+WHERE ssn=3;
+
+UPDATE employee 
+SET lname='aggarwal'
+WHERE ssn=6;
+
+UPDATE employee 
+SET lname='goyal'
+WHERE ssn=4;
+ (select distinct pnumber
+ from project,department,employee
+ where mgr_ssn=ssn and lname='aggarwal')
+ union
+ (select distinct pnumber
+ from project, works_on, employee
+ where lname='aggarwal' and essn=ssn);
+ 
+ select distinct essn
+ from works_on
+ where (pno,hours) in (select pno,hours 
+ from works_on
+ where essn=1);
+ UPDATE works_on 
+SET essn=2
+WHERE pno=2;
+select * from works_on;
+INSERT INTO `comp`.`works_on` VALUES(1,1,32.5);
+INSERT INTO `comp`.`works_on` VALUES(1,3,22.5);
+
+select fname , lname
+from  employee
+where  exists(select *
+from dependent
+where ssn=essn)
+and 
+not exists (select *
+from department
+where ssn=mgr_ssn);
+select * from employee;
+select fname,salary
+from employee
+where bdate like '%1996-11-08%';
+
+select* from employee
+where(salary between 30000 and 50000) and dno=5;
+
+select E.fname, E.lname,1.3*E.salary as increased_salary
+from employee as E , works_on as W , project as p 
+where E.ssn = W.essn and W.pno=p.pnumber;
+
+select fname, lname 
+from employee
+where superssn is not null;
+
+select sum(salary), max(salary),min(salary),avg(salary)
+from employee;
+
+select count(distinct salary)
+from employee;
+
+select d.dname,e.fname, e.lname,p.pname
+from department as d, employee as e , project as p , works_on as w
+where d.dnumber=e.dno and e.ssn=w.essn and w.pno=p.pnumber
+order by dname, e.lname ,p.pname,e.fname;
+
+select  * 
+from employee
+order by salary asc;
+
+select dno, count(*) , avg(salary)
+from employee 
+group by dno;
+ 
+ select pnumber, pname, count(*)
+ from project , works_on
+ where pnumber=pno
+ group by pnumber,pname
+ having count(*)>1;
