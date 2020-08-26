@@ -1,3 +1,4 @@
+# create is used to create a table
 CREATE TABLE `comp`.`employee`(
 `fname` VARCHAR(15) NOT NULL,
 `mname` CHAR NULL,
@@ -46,7 +47,8 @@ CREATE TABLE `dependent`(
 `bdate` DATE,
 `relationship` VARCHAR(10),
 PRIMARY KEY (`essn`,`dependent_name`));	
-    
+
+# insert into is used to insert values in the following table    
 INSERT INTO `comp`.`employee`(fname,mname,lname,ssn,bdate,address,sex,salary,superssn,dno) 
 VAlUES('siddharth','b','sharma',1,'1996-11-09','9/4258855 fdgh','m','38000',1,'5');
 
@@ -87,12 +89,15 @@ INSERT INTO `project`() VALUES('prox2',3,'belier3',5);
 INSERT INTO `works_on` VALUES(22345,2,32.5);
 INSERT INTO `works_on` VALUES(32345,3,32.5);
 
+#alter part
 ALTER TABLE `comp`.`department` ADD FOREIGN KEY(`mgr_ssn`) REFERENCES `comp`.`employee`(`ssn`);
 
 ALTER TABLE `comp`.`project` ADD FOREIGN KEY(`dnum`) REFERENCES `comp`.`department`(`Dnumber`);
 ALTER TABLE `comp`.`works_on` ADD FOREIGN KEY(`essn`) REFERENCES `comp`.`employee`(`ssn`);
 ALTER TABLE `works_on` ADD FOREIGN KEY(`pno`) REFERENCES `project`(`pnumber`);
 ALTER TABLE `dependent` ADD FOREIGN KEY(`essn`) REFERENCES `employee`(`ssn`);
+
+#how to use update
 UPDATE employee 
 SET salary='48000'
 WHERE ssn='siddharth';
@@ -230,3 +235,119 @@ group by dno;
  where pnumber=pno
  group by pnumber,pname
  having count(*)>1;
+ 
+ CREATE TABLE `comp`.`customer`(
+ `cid` int not null unique,
+`fname` VARCHAR(15) NOT NULL,
+`lname` VARCHAR(15) NOT NULL,
+ 
+ PRIMARY KEY(`cid`));
+ 
+ CREATE TABLE `comp`.`corder`(
+ `cid` int not null unique,
+`orderid` int NOT NULL,
+`pname` VARCHAR(15) NOT NULL,
+ 
+ PRIMARY KEY(`cid`));
+
+INSERT INTO `comp`.`customer` VAlUES(1,'sid','sharma');
+INSERT INTO `comp`.`customer` VAlUES(2,'rahul','sharma');
+INSERT INTO `comp`.`customer` VAlUES(3,'satyam','goyal');
+INSERT INTO `comp`.`customer` VAlUES(4,'ads','verma'); 
+INSERT INTO `comp`.`customer` VAlUES(5,'fgs','verma'); 
+
+INSERT INTO `comp`.`corder` VAlUES(1,123,'pro1');
+INSERT INTO `comp`.`corder` VAlUES(2,23,'pro2');
+INSERT INTO `comp`.`corder` VAlUES(3,1237,'pro4');
+INSERT INTO `comp`.`corder` VAlUES(4,12553,'pro1');
+
+select corder.orderid , customer.fname
+from corder
+inner join customer on corder.cid=customer.cid;
+
+alter table corder add shipperid int not null;
+update corder
+set shipperid=78
+where cid=4;
+
+create table `comp`.`ship`(
+`shipperid` int not null,
+`shipname` char(34) not null,
+primary key(`shipperid`));
+
+select * from corder;
+
+INSERT INTO `comp`.`ship` VAlUES(23,'ship1');
+INSERT INTO `comp`.`ship` VAlUES(3,'ship2');
+INSERT INTO `comp`.`ship` VAlUES(38,'ship3');
+INSERT INTO `comp`.`ship` VAlUES(8,'ship3');
+ 
+ select corder.cid, customer.fname,ship.shipname
+ from (( corder
+ inner join customer on corder.cid=customer.cid)
+ inner join ship on corder.shipperid=ship.shipperid);
+ 
+ select customer.fname,corder.cid
+ from customer
+ left join corder on customer.cid=corder.cid;
+ 
+ select customer.fname,corder.cid, customer.lname
+ from corder
+ right join customer on customer.cid=corder.cid;
+ 
+select customer.fname,corder.cid
+ from customer
+ left join corder on customer.cid=corder.cid
+ union all
+ select customer.fname,corder.cid from customer
+ right join corder on customer.cid=corder.cid;
+ 
+ select cid from customer
+ union all
+ select cid from corder;
+ 
+ select count(shipperid),shipname 
+ from ship
+ group by shipname
+ having count(shipperid)=2;
+# how to use cases like if else conditional statement 
+select cid, fname ,
+ case 
+	when cid <=2 then 'less than 2'
+	when cid = 3 then 'its 3'
+	else 'the cid is greater than 3'
+end as qua
+from customer;
+
+#creating a stored procedures
+DELIMITER //
+Create PROCEDURE cinsert(IN p_id int, IN f_name varchar(15),IN l_name varchar(15))
+    BEGIN
+    insert into customer(cid,fname,lname) values (p_id,f_name,l_name);
+	end	
+    //
+DELIMITER ;
+
+#calling a stored procedures
+call cinsert(6,'fg','df');
+
+#drop a stored procedure
+DROP PROCEDURE IF EXISTS cinsert;
+
+DELIMITER //
+Create PROCEDURE cshow()
+    BEGIN
+    select * from customer;
+	end	
+//
+DELIMITER ;
+call cshow();
+
+
+#creating database
+create database asdf;
+
+#deleting database
+drop database asdf;
+
+#backup db
